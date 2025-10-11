@@ -13,7 +13,7 @@ export class User {
 
   @IsString()
   @Length(2, 30)
-  @Column()
+  @Column({ nullable: true })
   username: string;
 
   @IsEmail()
