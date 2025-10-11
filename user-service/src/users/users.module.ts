@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersController } from './users.controller';
 import { User } from './users.entity';
 import { UserService } from './users.service';
-import { UsersController } from './users.controller';
-import { CqrsModule } from '@nestjs/cqrs';
-import { PermissionModule } from 'src/permissions/permission.module';
-import { DeleteUserHandler } from './commands/handlers/delete-user.handler';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), CqrsModule, PermissionModule],
-  providers: [UserService, DeleteUserHandler],
+  imports: [TypeOrmModule.forFeature([User]), CqrsModule],
+  providers: [UserService],
   controllers: [UsersController],
   exports: [UserService],
 })

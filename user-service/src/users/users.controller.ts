@@ -1,21 +1,13 @@
-import { Controller, Delete, Param, Request, UseGuards } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { User } from './users.entity';
-import { UserService } from './users.service';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CommandBus } from '@nestjs/cqrs';
-import { Roles } from 'src/permissions/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { PermissionGuard } from 'src/permissions/guards/permission.guard';
-import { DeleteUserCommand } from './commands/delete-user.command';
+import { User } from './users.entity';
+import { UserService } from './users.service';
 
 @Controller()
 export class UsersController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly commandBus: CommandBus,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @MessagePattern('get_users')
   async getUsers(): Promise<User[]> {
@@ -32,13 +24,5 @@ export class UsersController {
     }
 
     return this.userService.create(data);
-  }
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Roles('admin')
-  async deleteUser(@Param('id') id: string, @Request() req) {
-    const requester = req.user; // contains role and userId
-    return this.commandBus.execute(new DeleteUserCommand(+id, requester));
   }
 }
