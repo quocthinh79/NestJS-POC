@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { User } from './entities/users.entity';
@@ -24,5 +24,10 @@ export class UsersController {
     }
 
     return this.userService.create(data);
+  }
+
+  @MessagePattern('get_user_profile')
+  async handleGetProfile(@Payload() data: { userId: string }) {
+    return this.userService.findById(data.userId);
   }
 }
