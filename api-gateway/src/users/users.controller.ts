@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { CreateUserDto } from './users.dto';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
+import { CreateUserDto } from './users.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
