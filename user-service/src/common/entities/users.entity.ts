@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -22,4 +22,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  @Column({ default: 'guest' })
+  role: string;
 }

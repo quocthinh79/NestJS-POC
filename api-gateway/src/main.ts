@@ -17,11 +17,10 @@ async function bootstrap() {
     }),
   );
 
-  // ✅ Global error formatting
-  app.useGlobalFilters(new HttpExceptionFilter());
-
-  // ✅ Logs all requests/responses for visibility
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'], // your Swagger UI or frontend origin
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Auth API')
@@ -32,6 +31,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
+
+  // ✅ Global error formatting
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  // ✅ Logs all requests/responses for visibility
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   await app.listen(port);
 

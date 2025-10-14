@@ -4,10 +4,15 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { User } from '../common/entities/users.entity';
 import { UserService } from './users.service';
+import { CommandBus } from '@nestjs/cqrs';
+import { DeleteUserCommand } from './commands/delete-user.command';
 
 @Controller()
 export class UsersController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @MessagePattern('get_users')
   async getUsers(): Promise<User[]> {
@@ -29,5 +34,10 @@ export class UsersController {
   @MessagePattern('get_user_profile')
   async handleGetProfile(@Payload() data: { userId: string }) {
     return this.userService.findById(data.userId);
+  }
+
+  @MessagePattern('delete_user')
+  async handleDeleteUser(@Payload() data: { userId: string }) {
+    return this.commandBus.execute(new DeleteUserCommand(data.userId));
   }
 }

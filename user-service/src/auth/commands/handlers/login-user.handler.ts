@@ -22,7 +22,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error('Invalid credentials');
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(payload);
 
     return { access_token: token, user: { id: user.id, email: user.email } };

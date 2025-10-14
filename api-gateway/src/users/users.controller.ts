@@ -1,11 +1,25 @@
-import { Body, Controller, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { OwnershipGuard } from 'src/common/guards/ownership.guard';
 import { CreateUserDto } from './dto/users.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { ExceptOwnershipGuard } from 'src/common/guards/except-ownership.guard';
 
 @Controller('users')
 export class UsersController {
@@ -31,6 +45,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('profile')
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Current user profile' })
@@ -42,6 +57,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard, OwnershipGuard)
+  @ApiBearerAuth()
   @Get(':id/profile')
   @ApiOperation({ summary: 'Get specific user profile by ID' })
   @ApiResponse({ status: 200, description: 'Specific user profile' })
@@ -52,5 +68,19 @@ export class UsersController {
   async getSpecificUserProfile(@Param('id') id: string, @CurrentUser() req) {
     const userId = req?.id;
     return this.userClient.send('get_user_profile', { userId });
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, ExceptOwnershipGuard)
+  @ApiBearerAuth()
+  @Roles('admin')
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user by ID' })
+  @ApiResponse({ status: 200, description: 'User successfully deleted' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiParam({ name: 'id', type: String, description: 'User ID' })
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    const result$ = this.userClient.send('delete_user', { userId: id });
+    return await firstValueFrom(result$);
   }
 }

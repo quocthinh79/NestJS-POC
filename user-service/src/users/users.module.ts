@@ -4,10 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import { User } from '../common/entities/users.entity';
 import { UserService } from './users.service';
+import { DeleteUserHandler } from './commands/handlers/delete-user.handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), CqrsModule],
-  providers: [UserService],
+  providers: [UserService, DeleteUserHandler],
   controllers: [UsersController],
   exports: [UserService],
 })
