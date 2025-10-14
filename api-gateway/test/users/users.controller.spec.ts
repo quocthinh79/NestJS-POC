@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom, of } from 'rxjs';
-import { UsersController } from './users.controller';
+import { UsersController } from '../../src/users/users.controller';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
+import { OwnershipGuard } from 'src/common/guards/ownership.guard';
 
 describe('UsersController', () => {
   let controller: UsersController;

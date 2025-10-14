@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +17,12 @@ async function bootstrap() {
     }),
   );
 
+  // ✅ Global error formatting
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  // ✅ Logs all requests/responses for visibility
+  app.useGlobalInterceptors(new LoggingInterceptor());
+
   const config = new DocumentBuilder()
     .setTitle('Auth API')
     .setDescription('API Gateway for authentication and user management')
@@ -27,7 +35,7 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  console.log(`🚀 API Gateway is running on port ${port}`);
+  console.log(`🚀 API Gateway is running on http://localhost:${port}`);
   console.log(`📚 Swagger docs available at http://localhost:${port}/docs`);
 }
 bootstrap();

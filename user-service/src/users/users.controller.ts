@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { User } from './entities/users.entity';
+import { User } from '../common/entities/users.entity';
 import { UserService } from './users.service';
 
 @Controller()

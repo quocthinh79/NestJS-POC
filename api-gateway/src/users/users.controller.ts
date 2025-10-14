@@ -2,10 +2,10 @@ import { Body, Controller, Get, Inject, Param, Post, Req, UseGuards } from '@nes
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { OwnershipGuard } from 'src/auth/guards/ownership.guard';
-import { CreateUserDto } from './users.dto';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { OwnershipGuard } from 'src/common/guards/ownership.guard';
+import { CreateUserDto } from './dto/users.dto';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {

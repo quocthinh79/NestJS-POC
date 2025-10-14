@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserModule } from './users.module';
-import { UsersController } from './users.controller';
-import { UserService } from './users.service';
-import { User } from './entities/users.entity';
+import { UserModule } from '../../src/users/users.module';
+import { UsersController } from '../../src/users/users.controller';
+import { UserService } from '../../src/users/users.service';
+import { User } from '../../src/common/entities/users.entity';
 import { Repository } from 'typeorm';
 
 describe('UserModule', () => {

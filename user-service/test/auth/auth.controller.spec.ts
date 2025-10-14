@@ -3,12 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/entities/users.entity';
-import { AuthController } from './auth.controller';
-import { LoginUserHandler } from './commands/handlers/login-user.handler';
-import { LoginUserCommand } from './commands/login-user.command';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { RegisterUserHandler } from './commands/handlers/register-user.handler';
+import { User } from 'src/common/entities/users.entity';
+import { AuthController } from '../../src/auth/auth.controller';
+import { LoginUserHandler } from '../../src/auth/commands/handlers/login-user.handler';
+import { LoginUserCommand } from '../../src/auth/commands/login-user.command';
+import { RegisterUserDto } from '../../src/auth/dto/register-user.dto';
+import { RegisterUserHandler } from '../../src/auth/commands/handlers/register-user.handler';
 
 describe('AuthController', () => {
   let controller: AuthController;
