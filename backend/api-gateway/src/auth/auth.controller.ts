@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -16,8 +16,12 @@ export class AuthController {
   @ApiResponse({ status: 409, description: 'Email already exists' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async register(@Body() dto: RegisterUserDto) {
-    const result$ = this.userClient.send({ cmd: 'register-user' }, dto);
-    return await firstValueFrom(result$);
+    try {
+      const result$ = this.userClient.send({ cmd: 'register-user' }, dto);
+      return await firstValueFrom(result$);
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 
   @Post('login')
@@ -26,7 +30,11 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async login(@Body() dto: LoginUserDto) {
-    const result$ = this.userClient.send({ cmd: 'login-user' }, dto);
-    return await firstValueFrom(result$);
+    try {
+      const result$ = this.userClient.send({ cmd: 'login-user' }, dto);
+      return await firstValueFrom(result$);
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 }

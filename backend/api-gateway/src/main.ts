@@ -2,12 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { HttpExceptionsFilter } from './common/filters/http-exception.filter';
+import { RpcExceptionFilter } from './common/filters/rpc-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -18,7 +20,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'], // your Swagger UI or frontend origin
+    origin: ['http://localhost:3001', 'http://127.0.0.1:3001', 'http://localhost:3000'], // your Swagger UI or frontend origin
     credentials: true,
   });
 
@@ -32,11 +34,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  // ✅ Global error formatting
-  app.useGlobalFilters(new HttpExceptionFilter());
-
   // ✅ Logs all requests/responses for visibility
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
+  // ✅ Global error formatting
+  app.useGlobalFilters(new HttpExceptionsFilter(), new RpcExceptionFilter());
 
   await app.listen(port);
 

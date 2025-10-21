@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as sgMail from '@sendgrid/mail';
 import { User } from 'src/common/entities/users.entity';
+import { RpcException } from '@nestjs/microservices';
+import { HttpStatus } from '@nestjs/common';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {
@@ -19,26 +21,32 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     const { email, username, password } = command.registerUserDto;
 
     const exists = await this.usersRepo.findOne({ where: { email } });
-    if (exists) throw new Error('Email already registered');
+    if (exists) {
+      throw new RpcException({
+        errorMessage: 'Email already registered',
+        status: HttpStatus.CONFLICT,
+        errorCode: 'EMAIL_ALREADY_REGISTERED',
+      });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
     const user = this.usersRepo.create({ email, username, password: hashed });
     await this.usersRepo.save(user);
     console.log(`User registered: ${email}`);
 
-    try {
-      await sgMail.send({
-        to: email,
-        from: 'noreply@yourapp.com',
-        subject: 'Welcome to Our App!',
-        html: `<p>Hello ${username},</p>
-             <p>Your account has been created. Please change your password soon.</p>`,
-      });
-    } catch (error) {
-      console.error('Error sending email:', error);
+    // try {
+    //   await sgMail.send({
+    //     to: email,
+    //     from: 'noreply@yourapp.com',
+    //     subject: 'Welcome to Our App!',
+    //     html: `<p>Hello ${username},</p>
+    //          <p>Your account has been created. Please change your password soon.</p>`,
+    //   });
+    // } catch (error) {
+    //   console.error('Error sending email:', error);
 
-      return { id: user.id, email: user.email, username: user.username };
-    }
+    //   return { id: user.id, email: user.email, username: user.username };
+    // }
 
     return { id: user.id, email: user.email, username: user.username };
   }

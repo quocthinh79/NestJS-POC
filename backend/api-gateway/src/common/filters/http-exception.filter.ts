@@ -1,21 +1,32 @@
-import { ArgumentsHost, ExceptionFilter, HttpException } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ThrottlerException } from '@nestjs/throttler';
+import { Response } from 'express';
 
-export class HttpExceptionFilter implements ExceptionFilter {
+@Catch(HttpException)
+export class HttpExceptionsFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
+    if (exception instanceof ThrottlerException) {
+      throw exception;
+    }
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-    const status = exception.getStatus();
-    const errorResponse = exception.getResponse();
+    const status =
+      typeof exception.getStatus() === 'number'
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const error = typeof errorResponse === 'string' ? { message: errorResponse } : errorResponse;
+    const exceptionResponse = exception.getResponse() as {
+      status: number;
+      errorMessage: string;
+      errorCode: string;
+    };
 
-    return response.status(status).json({
-      statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      ...error,
-    });
+    const errorMessage = exceptionResponse?.errorMessage || 'Internal server error';
+    const errorMessageCode = exceptionResponse?.errorCode || 'INTERNAL_SERVER_ERROR';
+
+    return response
+      .status(status)
+      .json({ success: false, errorMessage, errorMessageCode, data: null });
   }
 }

@@ -1,8 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
 import { useContainer } from 'class-validator';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const port = 4001;

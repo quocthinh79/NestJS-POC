@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Inject,
   Param,
   ParseUUIDPipe,
@@ -11,15 +12,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { OwnershipGuard } from 'src/common/guards/ownership.guard';
-import { CreateUserDto } from './dto/users.dto';
+import { firstValueFrom } from 'rxjs';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ExceptOwnershipGuard } from 'src/common/guards/except-ownership.guard';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { OwnershipGuard } from 'src/common/guards/ownership.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { CreateUserDto } from './dto/users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -30,8 +31,12 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'List of all users' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async getAllUsers() {
-    const result$ = this.userClient.send('get_users', {});
-    return await firstValueFrom(result$);
+    try {
+      const result$ = this.userClient.send('get_users', {});
+      return await firstValueFrom(result$);
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 
   @Post()
@@ -40,8 +45,12 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async createUser(@Body() data: CreateUserDto) {
-    const result$ = this.userClient.send('create_user', data);
-    return await firstValueFrom(result$);
+    try {
+      const result$ = this.userClient.send('create_user', data);
+      return await firstValueFrom(result$);
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 
   @UseGuards(JwtAuthGuard)
@@ -52,8 +61,12 @@ export class UsersController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async getProfile(@Req() req) {
-    const userId = req.user.id;
-    return this.userClient.send('get_user_profile', { userId });
+    try {
+      const userId = req.user.id;
+      return this.userClient.send('get_user_profile', { userId });
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 
   @UseGuards(JwtAuthGuard, OwnershipGuard)
@@ -66,8 +79,12 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
   async getSpecificUserProfile(@Param('id') id: string, @CurrentUser() req) {
-    const userId = req?.id;
-    return this.userClient.send('get_user_profile', { userId });
+    try {
+      const userId = req?.id;
+      return this.userClient.send('get_user_profile', { userId });
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, ExceptOwnershipGuard)
@@ -80,7 +97,11 @@ export class UsersController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
   async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
-    const result$ = this.userClient.send('delete_user', { userId: id });
-    return await firstValueFrom(result$);
+    try {
+      const result$ = this.userClient.send('delete_user', { userId: id });
+      return await firstValueFrom(result$);
+    } catch (error) {
+      throw new HttpException(error, error?.status);
+    }
   }
 }
