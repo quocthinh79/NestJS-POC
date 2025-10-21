@@ -1,3 +1,5 @@
+import { ACCESS_TOKEN_COOKIE_KEY_NAME } from '@/shared/constants';
+import { getCookie } from '@/shared/utils';
 import axios, { type AxiosInstance } from 'axios';
 
 const apiCommon: AxiosInstance = axios.create({
@@ -6,6 +8,13 @@ const apiCommon: AxiosInstance = axios.create({
 
 apiCommon.interceptors.request.use(
   async (config) => {
+    const tokenFromCookie = getCookie(ACCESS_TOKEN_COOKIE_KEY_NAME);
+
+    if (tokenFromCookie) {
+      apiCommon.defaults.headers.common.Authorization = `Bearer ${tokenFromCookie}`;
+      config.headers['Authorization'] = `Bearer ${tokenFromCookie}`;
+    }
+
     return config;
   },
   (error) => {

@@ -1,18 +1,15 @@
 'use client';
 
 import { Button, Card, Form, Input } from 'antd';
-import { RegisterFormValues } from '../../types';
+import { LoginFormValues } from '../../types';
 
-interface RegisterFormProps {
-  onSubmit?: (values: RegisterFormValues) => void;
+interface LoginFormProps {
+  onSubmit?: (values: LoginFormValues) => void;
   isLoading?: boolean;
 }
 
-export const RegisterForm = ({
-  onSubmit,
-  isLoading = false,
-}: RegisterFormProps) => {
-  const [form] = Form.useForm<RegisterFormValues>();
+export const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
+  const [form] = Form.useForm<LoginFormValues>();
 
   return (
     <Card>
@@ -22,21 +19,14 @@ export const RegisterForm = ({
         onFinish={onSubmit}
         style={{ width: 400 }}
       >
-        <Form.Item<RegisterFormValues>
+        <Form.Item<LoginFormValues>
           name='email'
           label='Email'
           rules={[{ required: true, type: 'email' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item<RegisterFormValues>
-          name='username'
-          label='Username'
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item<RegisterFormValues>
+        <Form.Item<LoginFormValues>
           name='password'
           label='Password'
           rules={[{ required: true, min: 6 }]}
@@ -45,7 +35,7 @@ export const RegisterForm = ({
         </Form.Item>
         <Form.Item>
           <Button type='primary' htmlType='submit' block loading={isLoading}>
-            Register
+            Login
           </Button>
         </Form.Item>
       </Form>

@@ -25,6 +25,6 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(payload);
 
-    return { access_token: token, user: { id: user.id, email: user.email } };
+    return { accessToken: token, id: user.id, email: user.email, role: user.role };
   }
 }
