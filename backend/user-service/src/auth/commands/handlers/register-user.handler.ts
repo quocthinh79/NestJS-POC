@@ -35,21 +35,21 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     await this.usersRepo.save(user);
     console.log(`User registered: ${email}`);
 
-    try {
-      await sgMail.send({
+    sgMail
+      .send({
         to: email,
         from: 'poc-node-js.sender@yopmail.com',
         subject: 'Welcome to Our App!',
-        html: `<p>Hello ${username},</p>
+        html: `<p>Hello <strong>${username}</strong>,</p>
              <p>Your account has been created. Please change your password soon.</p>`,
+      })
+      .catch(error => {
+        throw new RpcException({
+          errorMessage: 'Failed to send welcome email: ' + error.message,
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errorCode: 'EMAIL_SEND_FAILED',
+        });
       });
-    } catch (error) {
-      throw new RpcException({
-        errorMessage: 'Failed to send welcome email: ' + error.message,
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        errorCode: 'EMAIL_SEND_FAILED',
-      });
-    }
 
     return { id: user.id, email: user.email, username: user.username };
   }

@@ -6,6 +6,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { HttpExceptionsFilter } from './common/filters/http-exception.filter';
 import { RpcExceptionFilter } from './common/filters/rpc-exception.filter';
+import { loggerMiddleware } from './common/middlewares/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,6 +39,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
   // ✅ Global error formatting
   app.useGlobalFilters(new HttpExceptionsFilter(), new RpcExceptionFilter());
+
+  app.use(loggerMiddleware);
 
   await app.listen(port);
 

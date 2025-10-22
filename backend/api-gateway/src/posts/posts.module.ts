@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PostsController } from './posts.controller';
 
 @Module({
   imports: [
@@ -13,8 +12,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [AuthController],
-  providers: [JwtStrategy],
-  exports: [],
+  controllers: [PostsController],
 })
-export class AuthModule {}
+export class PostsModule {}

@@ -8,7 +8,7 @@ import { setCookie } from '@/shared/utils/cookies';
 import { message } from 'antd';
 
 const LoginPage = () => {
-  const { handleLogin } = useLogin({
+  const { handleLogin, isMutating } = useLogin({
     onError(err) {
       message.error(err?.response?.data?.errorMessage);
     },
@@ -27,7 +27,7 @@ const LoginPage = () => {
     await handleLogin(values);
   };
 
-  return <LoginForm onSubmit={handleSubmitLogin} />;
+  return <LoginForm onSubmit={handleSubmitLogin} isLoading={isMutating} />;
 };
 
 export default LoginPage;

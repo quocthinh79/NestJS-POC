@@ -6,7 +6,7 @@ import { RegisterFormValues } from '@/features/authentication/types';
 import { message } from 'antd';
 
 const RegisterPage = () => {
-  const { handleRegister } = useRegister({
+  const { handleRegister, isMutating } = useRegister({
     onError(err) {
       message.error(err?.response?.data?.errorMessage);
     },
@@ -19,7 +19,9 @@ const RegisterPage = () => {
     await handleRegister(values);
   };
 
-  return <RegisterForm onSubmit={handleSubmitRegister} />;
+  return (
+    <RegisterForm onSubmit={handleSubmitRegister} isLoading={isMutating} />
+  );
 };
 
 export default RegisterPage;

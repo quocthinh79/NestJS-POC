@@ -7,7 +7,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
-  constructor(@Inject('USERS_SERVICE') private readonly userClient: ClientProxy) {}
+  constructor(@Inject('MAIN_SERVICE') private readonly userClient: ClientProxy) {}
 
   @Post('register')
   @ApiOperation({ summary: 'User registration' })

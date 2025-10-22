@@ -24,7 +24,7 @@ import { CreateUserDto } from './dto/users.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(@Inject('USERS_SERVICE') private readonly userClient: ClientProxy) {}
+  constructor(@Inject('MAIN_SERVICE') private readonly userClient: ClientProxy) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })

@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersController } from './users/users.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './common/entities/users.entity';
-import { UserModule } from './users/users.module';
-import { CqrsModule } from '@nestjs/cqrs';
-import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { User } from './common/entities/users.entity';
+import { UsersController } from './users/users.controller';
+import { UserModule } from './users/users.module';
+import { PostModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -29,8 +28,9 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     CqrsModule,
     AuthModule,
+    PostModule,
   ],
-  controllers: [AppController, UsersController],
-  providers: [AppService],
+  controllers: [UsersController],
+  providers: [],
 })
 export class AppModule {}

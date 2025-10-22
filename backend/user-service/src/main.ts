@@ -9,7 +9,10 @@ async function bootstrap() {
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
     transport: Transport.TCP,
-    options: { host: '0.0.0.0', port: port },
+    options: {
+      host: process.env.USER_SERVICE_HOST || '127.0.0.1',
+      port: parseInt(process.env.USER_SERVICE_PORT || '4001', 10),
+    },
   });
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });

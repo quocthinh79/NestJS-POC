@@ -18,7 +18,7 @@ describe('UsersController', () => {
       controllers: [UsersController],
       providers: [
         {
-          provide: 'USERS_SERVICE',
+          provide: 'MAIN_SERVICE',
           useValue: mockUserClient,
         },
       ],
@@ -31,7 +31,7 @@ describe('UsersController', () => {
       .compile();
 
     controller = module.get<UsersController>(UsersController);
-    userClient = module.get<ClientProxy>('USERS_SERVICE');
+    userClient = module.get<ClientProxy>('MAIN_SERVICE');
   });
 
   it('should call userClient.send() with correct arguments', async () => {
