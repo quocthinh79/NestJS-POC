@@ -7,9 +7,14 @@ import { User } from './common/entities/users.entity';
 import { UserModule } from './users/users.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', '../.env'],
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

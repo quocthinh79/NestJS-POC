@@ -7,6 +7,7 @@ import * as sgMail from '@sendgrid/mail';
 import { User } from 'src/common/entities/users.entity';
 import { RpcException } from '@nestjs/microservices';
 import { HttpStatus } from '@nestjs/common';
+import { APP_CONFIG } from 'src/constants/env';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {
@@ -14,7 +15,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
   ) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+    sgMail.setApiKey(APP_CONFIG.SENDGRID_API_KEY);
   }
 
   async execute(command: RegisterUserCommand): Promise<Partial<User> | null> {
@@ -34,19 +35,21 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     await this.usersRepo.save(user);
     console.log(`User registered: ${email}`);
 
-    // try {
-    //   await sgMail.send({
-    //     to: email,
-    //     from: 'noreply@yourapp.com',
-    //     subject: 'Welcome to Our App!',
-    //     html: `<p>Hello ${username},</p>
-    //          <p>Your account has been created. Please change your password soon.</p>`,
-    //   });
-    // } catch (error) {
-    //   console.error('Error sending email:', error);
-
-    //   return { id: user.id, email: user.email, username: user.username };
-    // }
+    try {
+      await sgMail.send({
+        to: email,
+        from: 'poc-node-js.sender@yopmail.com',
+        subject: 'Welcome to Our App!',
+        html: `<p>Hello ${username},</p>
+             <p>Your account has been created. Please change your password soon.</p>`,
+      });
+    } catch (error) {
+      throw new RpcException({
+        errorMessage: 'Failed to send welcome email: ' + error.message,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorCode: 'EMAIL_SEND_FAILED',
+      });
+    }
 
     return { id: user.id, email: user.email, username: user.username };
   }
