@@ -8,7 +8,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       err?.message ?? (typeof info === 'string' ? info : info?.message) ?? 'Unauthorized';
 
     if (err || !user) {
-      throw new UnauthorizedException(message);
+      throw new UnauthorizedException({
+        status: 401,
+        errorMessage: message,
+        errorCode: 'UNAUTHORIZED',
+      });
     }
     return user;
   }

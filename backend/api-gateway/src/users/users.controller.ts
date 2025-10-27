@@ -96,7 +96,7 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, ExceptOwnershipGuard)
+  @UseGuards(JwtAuthGuard, ExceptOwnershipGuard, RolesGuard)
   @ApiBearerAuth()
   @Roles('admin')
   @Delete(':id')
@@ -105,6 +105,8 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const result$ = this.userClient.send('delete_user', { userId: id });
