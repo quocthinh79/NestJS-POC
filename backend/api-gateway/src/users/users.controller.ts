@@ -8,11 +8,12 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { firstValueFrom } from 'rxjs';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -27,12 +28,20 @@ export class UsersController {
   constructor(@Inject('MAIN_SERVICE') private readonly userClient: ClientProxy) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'List of all users' })
+  @ApiOperation({ summary: 'Get users' })
+  @ApiResponse({ status: 200, description: 'List of users' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async getAllUsers() {
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Number of items per page',
+  })
+  @ApiQuery({ name: 'search', required: false, type: String, description: 'Search query' })
+  async getUsers(@Query() payload: { page?: number; limit?: number; search?: string }) {
     try {
-      const result$ = this.userClient.send('get_users', {});
+      const result$ = this.userClient.send('get_users', payload);
       return await firstValueFrom(result$);
     } catch (error) {
       throw new HttpException(error, error?.status);

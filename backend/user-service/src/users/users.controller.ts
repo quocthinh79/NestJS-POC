@@ -6,6 +6,7 @@ import { User } from '../common/entities/users.entity';
 import { UserService } from './users.service';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteUserCommand } from './commands/delete-user.command';
+import { ListUserCommand } from './commands/list-user.command';
 
 @Controller()
 export class UsersController {
@@ -15,8 +16,10 @@ export class UsersController {
   ) {}
 
   @MessagePattern('get_users')
-  async getUsers(): Promise<User[]> {
-    return this.userService.findAll();
+  async getUsers(payload: { page?: number; limit?: number; search?: string }) {
+    return this.commandBus.execute(
+      new ListUserCommand(payload.page, payload.limit, payload.search),
+    );
   }
 
   @MessagePattern('create_user')

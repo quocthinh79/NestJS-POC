@@ -6,4 +6,15 @@ interface ApiResponse<TData = null> {
   success?: boolean;
 }
 
-export type { ApiResponse };
+type Pagination = {
+  page: number;
+  limit: number;
+  totalPages: number;
+  total: number;
+};
+
+interface ResponsePaging<T> extends ApiResponse<T> {
+  paging: Pagination;
+}
+
+export type { ApiResponse, ResponsePaging };

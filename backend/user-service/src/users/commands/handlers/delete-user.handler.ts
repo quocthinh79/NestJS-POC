@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/common/entities/users.entity';
 import { Repository } from 'typeorm';
 import { DeleteUserCommand } from '../delete-user.command';
+import { RpcException } from '@nestjs/microservices';
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
@@ -12,7 +13,7 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
     const { userId } = command;
 
     const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user) throw new Error('User not found');
+    if (!user) throw new RpcException('User not found');
 
     await this.userRepo.remove(user);
 

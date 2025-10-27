@@ -9,9 +9,10 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, ApiResponse<T>
     return next.handle().pipe(
       map(data => ({
         success: true,
-        data: data ?? null,
+        data: data?.data ?? data ?? null,
         code: 200,
         errorMessage: null,
+        paging: data?.paging ?? null,
       })),
     );
   }

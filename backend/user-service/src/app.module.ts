@@ -7,6 +7,8 @@ import { User } from './common/entities/users.entity';
 import { UsersController } from './users/users.controller';
 import { UserModule } from './users/users.module';
 import { PostModule } from './posts/posts.module';
+import { Repository } from 'typeorm';
+import { Post } from './common/entities/Posts.entity';
 
 @Module({
   imports: [
@@ -22,15 +24,17 @@ import { PostModule } from './posts/posts.module';
       password: 'root',
       database: 'nestjs_db',
       autoLoadEntities: true,
-      synchronize: true,
-      entities: [User],
+      entities: [User, Post],
+      migrations: [__dirname + '/migrations/*{.ts,.js}'],
+      migrationsRun: false, // <— important
     }),
     UserModule,
     CqrsModule,
     AuthModule,
     PostModule,
+    Repository,
   ],
   controllers: [UsersController],
-  providers: [],
+  providers: [Repository<User>, Repository<Post>],
 })
 export class AppModule {}
