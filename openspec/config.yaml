@@ -1,0 +1,76 @@
+schema: spec-driven
+
+context: |
+  ## Project Overview
+  NestJS-POC — a full-stack monorepo with three sub-projects under backend/ and frontend/.
+
+  ## Technology Stack
+
+  ### Backend – API Gateway (backend/api-gateway)
+  - Runtime: Node.js, TypeScript ^5.1
+  - Framework: NestJS ^10 (@nestjs/common, @nestjs/core, @nestjs/platform-express)
+  - Microservices: @nestjs/microservices ^10.4 (TCP transport, ClientProxy)
+  - Auth: @nestjs/passport ^11.0, @nestjs/jwt ^11.0, passport-jwt ^4.0
+  - CQRS: @nestjs/cqrs ^11.0
+  - Validation: class-validator ^0.14, class-transformer ^0.5
+  - API Docs: @nestjs/swagger ^8.1, swagger-ui-express ^5.0
+  - Rate Limiting: @nestjs/throttler ^6.4
+  - Build: Nest CLI ^10, ts-jest ^29, Jest ^29, Supertest ^7
+  - Linting: ESLint ^8, Prettier ^3
+
+  ### Backend – User Service (backend/user-service)
+  - Same NestJS ^10 core + CQRS + microservices stack
+  - ORM: TypeORM ^0.3.27 via @nestjs/typeorm ^11.0
+  - Database driver: mysql2 ^3.15 (MySQL)
+  - Password hashing: bcrypt ^6.0
+  - Email: @sendgrid/mail ^8.1
+  - Config: @nestjs/config ^4.0 (dotenv-based)
+
+  ### Frontend (frontend/)
+  - Framework: Next.js 14.2.26 (App Router, RSC)
+  - Language: TypeScript ^5, React ^18, React-DOM ^18
+  - UI Library: Ant Design (antd) ^5.27, @ant-design/nextjs-registry ^1.1
+  - HTTP Client: Axios ^1.12
+  - Data Fetching: SWR ^2.3 (useSWR, useSWRMutation)
+  - Fonts: Geist (local woff via next/font)
+  - Linting: eslint-config-next 14.2
+
+  ## Architectural Patterns
+
+  - **API Gateway + Microservice**: api-gateway is the public HTTP entry-point;
+    it proxies requests via NestJS TCP microservices to user-service.
+  - **CQRS (Command Bus)**: user-service uses @nestjs/cqrs CommandBus with
+    dedicated Command + Handler classes (e.g., RegisterUserCommand →
+    RegisterUserHandler).
+  - **DTO Validation**: DTOs decorated with class-validator; global ValidationPipe
+    with whitelist, forbidNonWhitelisted, and transform enabled.
+  - **Guard Stack**: JwtAuthGuard, RolesGuard (@SetMetadata), OwnershipGuard,
+    ExceptOwnershipGuard — composable via @UseGuards.
+  - **Global Interceptors/Filters**: ResponseInterceptor wraps responses in a
+    standard ApiResponse envelope; HttpExceptionsFilter and RpcExceptionFilter
+    handle error normalization.
+  - **Feature-Sliced Frontend**: features/ directory with co-located
+    components/, hooks/, services/, types/ per feature (admin/users,
+    authentication). Shared providers (AntdProvider, SWRProvider,
+    GlobalProvider) wrap the app.
+
+  ## Database
+  - MySQL accessed via TypeORM (Repository pattern).
+  - Entities: User (UUID PK, email, name, role, createdAt), Post (UUID PK,
+    ManyToOne → User).
+  - Migrations are disabled at runtime (migrationsRun: false); schema synced
+    via synchronize (dev mode assumed).
+
+  ## Testing Conventions
+  - **Unit tests**: Jest + @nestjs/testing; spec files in test/<module>/
+    (e.g., users.controller.spec.ts, users.service.spec.ts).
+  - **E2E tests**: Supertest + Jest (jest-e2e.json config, *.e2e-spec.ts).
+  - **Test commands**: npm run test | test:watch | test:cov | test:e2e.
+  - Transform: ts-jest with tsconfig-paths.
+  - Guards are overridden/mocked in unit tests for isolation.
+
+  ## Code Style
+  - Prettier: 2-space indent, single quotes, trailing commas, 100 print width.
+  - ESLint: @typescript-eslint with prettier integration.
+  - Target: ES2021, CommonJS modules (backend), ESNext modules (frontend).
+
