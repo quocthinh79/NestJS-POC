@@ -79,3 +79,10 @@ General rules:
 * If information is missing or uncertain, mention it under `[Questions]` or `[Risk]`, not `[Summary]`.
 * If the explored context is insufficient, state the missing decision-critical information under `[Questions]`.
 * Only recommend a spec name when there are no important open questions.
+
+## Frontend UI Development Rule
+
+* **Ant Design + Design Taste Integration**: When building or refactoring frontend source code (UI components, layouts, pages), ALWAYS use **Ant Design (`antd`)** as the primary component library and combine it with **Design Taste** principles (`design-taste-frontend` / `design-taste-frontend-v1`).
+* **Component Usage**: Use Ant Design components (`Form`, `Input`, `Button`, `Card`, `Typography`, `Flex`, `Row`, `Col`, `Badge`, `Tag`, etc.) and official `@ant-design/icons` for core interactive elements and layouts.
+* **Design & Aesthetics**: Customize Ant Design's `ConfigProvider` themes, typography, spacing, and colors to deliver anti-slop, high-end visual aesthetics (e.g. customized dark/light algorithms, glassmorphism paneling, clear visual hierarchy, and perpetual micro-interactions where appropriate).
+

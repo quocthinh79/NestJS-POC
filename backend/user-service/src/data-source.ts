@@ -1,8 +1,7 @@
-// data-source.ts
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { User } from './common/entities/users.entity';
-import { Post } from '@nestjs/common';
+import { Post } from './common/entities/Posts.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -12,6 +11,7 @@ export const AppDataSource = new DataSource({
   password: 'root',
   database: 'nestjs_db',
   entities: [User, Post],
+  synchronize: true,
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
-  migrationsRun: false, // <— important
+  migrationsRun: false,
 });

@@ -6,7 +6,7 @@ interface AuthRootLayoutProps {
 
 const AuthRootLayout = ({ children }: AuthRootLayoutProps) => {
   return (
-    <Flex justify='center' align='center' style={{ minHeight: '100vh' }}>
+    <Flex justify="center" align="center" style={{ minHeight: '100vh', padding: '24px' }}>
       {children}
     </Flex>
   );

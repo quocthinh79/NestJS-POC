@@ -45,7 +45,7 @@ const useGetUsers = (props?: UseGetUsersProps) => {
     }
 
     onRevalidate?.(data);
-  }, [data]);
+  }, [data, onRevalidate]);
 
   return { ...restSWR, data, errorMessage: data?.errorMessage };
 };

@@ -10,7 +10,7 @@ import { message } from 'antd';
 const LoginPage = () => {
   const { handleLogin, isMutating } = useLogin({
     onError(err) {
-      message.error(err?.response?.data?.errorMessage);
+      message.error(err?.response?.data?.errorMessage || 'Login failed.');
     },
     onSuccess(data) {
       const accessToken = data?.data?.accessToken;

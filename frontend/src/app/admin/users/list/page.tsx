@@ -6,10 +6,10 @@ import useGetUsers from '@/features/admin/users/hooks/useGetUsers';
 import { adminUserEndpoints } from '@/features/admin/users/services/endpoints';
 import { Modal, notification } from 'antd';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { mutate } from 'swr';
 
-const UsersListPage = () => {
+const UsersListContent = () => {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get('page') || 1);
 
@@ -72,6 +72,14 @@ const UsersListPage = () => {
         <p>Are you sure you want to delete this user?</p>
       </Modal>
     </>
+  );
+};
+
+const UsersListPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UsersListContent />
+    </Suspense>
   );
 };
 
