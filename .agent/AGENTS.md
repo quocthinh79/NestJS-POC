@@ -86,3 +86,10 @@ General rules:
 * **Component Usage**: Use Ant Design components (`Form`, `Input`, `Button`, `Card`, `Typography`, `Flex`, `Row`, `Col`, `Badge`, `Tag`, etc.) and official `@ant-design/icons` for core interactive elements and layouts.
 * **Design & Aesthetics**: Customize Ant Design's `ConfigProvider` themes, typography, spacing, and colors to deliver anti-slop, high-end visual aesthetics (e.g. customized dark/light algorithms, glassmorphism paneling, clear visual hierarchy, and perpetual micro-interactions where appropriate).
 
+## Task Completion & Verification Rule
+
+* **Zero Error Mandate**: Before declaring any task completed or finished, ALWAYS verify that the codebase contains no remaining errors (such as TypeScript compilation errors, ESLint/linter errors, build failures, or broken tests).
+* **Pre-completion Checking**: Run relevant verification commands (e.g., `tsc --noEmit`, `npm run lint`, `npm run build`, `npm test` or module-specific checks) before completing a task.
+* **Iterative Fixes**: If any error or warning is reported, fix the root cause and re-verify iteratively until all errors are completely resolved and zero errors remain.
+
+

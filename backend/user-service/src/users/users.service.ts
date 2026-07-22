@@ -15,6 +15,10 @@ export class UserService {
     return this.userRepo.save(user);
   }
 
+  async findAll(): Promise<User[]> {
+    return this.userRepo.find();
+  }
+
   async findById(id: string) {
     return this.userRepo.findOne({ where: { id } });
   }

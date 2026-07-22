@@ -31,7 +31,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = this.usersRepo.create({ email, username, password: hashed });
+    const user = this.usersRepo.create({ email, username, passwordHash: hashed });
     await this.usersRepo.save(user);
     console.log(`User registered: ${email}`);
 

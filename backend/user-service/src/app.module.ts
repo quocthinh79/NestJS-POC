@@ -9,6 +9,10 @@ import { UserModule } from './users/users.module';
 import { PostModule } from './posts/posts.module';
 import { Repository } from 'typeorm';
 import { Post } from './common/entities/Posts.entity';
+import { CountryInfo } from './common/entities/country-info.entity';
+import { AffiliateInfo } from './common/entities/affiliate-info.entity';
+import { StoreInfo } from './common/entities/store-info.entity';
+import { UserStore } from './common/entities/user-store.entity';
 
 @Module({
   imports: [
@@ -24,10 +28,10 @@ import { Post } from './common/entities/Posts.entity';
       password: 'root',
       database: 'nestjs_db',
       autoLoadEntities: true,
-      entities: [User, Post],
-      synchronize: true,
+      entities: [User, Post, CountryInfo, AffiliateInfo, StoreInfo, UserStore],
+      synchronize: false,
       migrations: [__dirname + '/migrations/*{.ts,.js}'],
-      migrationsRun: false,
+      migrationsRun: true,
     }),
     UserModule,
     CqrsModule,

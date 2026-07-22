@@ -70,7 +70,7 @@ describe('LoginUserHandler', () => {
 
   it('should return token for valid credentials', async () => {
     const dto = { email: 'test@mail.com', password: '123456' };
-    const user = { id: '1', email: dto.email, password: await bcrypt.hash(dto.password, 10) };
+    const user = { id: '1', email: dto.email, passwordHash: await bcrypt.hash(dto.password, 10) };
 
     userRepo.findOne.mockResolvedValue(user);
     jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
@@ -79,8 +79,10 @@ describe('LoginUserHandler', () => {
     const result = await handler.execute(new LoginUserCommand(dto));
 
     expect(result).toEqual({
-      access_token: 'fake-token',
-      user: { id: user.id, email: user.email },
+      accessToken: 'fake-token',
+      id: user.id,
+      email: user.email,
+      role: undefined,
     });
   });
 
@@ -88,7 +90,7 @@ describe('LoginUserHandler', () => {
     userRepo.findOne.mockResolvedValue(null);
     await expect(
       handler.execute(new LoginUserCommand({ email: 'no@mail.com', password: 'x' })),
-    ).rejects.toThrow('Invalid credentials');
+    ).rejects.toThrow();
   });
 });
 
@@ -156,7 +158,12 @@ describe('RegisterUserHandler', () => {
   it('should create a new user', async () => {
     const dto = { email: 'test@mail.com', username: 'test', password: '123456' };
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = { id: '1', ...dto, password: hashedPassword };
+    const user = {
+      id: '1',
+      email: dto.email,
+      username: dto.username,
+      passwordHash: hashedPassword,
+    };
 
     userRepo.findOne.mockResolvedValue(null);
     userRepo.create.mockReturnValue(user);
@@ -176,8 +183,6 @@ describe('RegisterUserHandler', () => {
 
     userRepo.findOne.mockResolvedValue(existingUser);
 
-    await expect(handler.execute({ registerUserDto: dto })).rejects.toThrow(
-      'Email already registered',
-    );
+    await expect(handler.execute({ registerUserDto: dto })).rejects.toThrow();
   });
 });

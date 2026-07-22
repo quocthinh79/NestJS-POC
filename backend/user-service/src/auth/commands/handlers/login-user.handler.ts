@@ -25,7 +25,7 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
         errorCode: 'USER_NOT_FOUND',
       });
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.passwordHash);
     if (!isValid)
       throw new RpcException({
         errorMessage: 'Wrong password',
