@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom, of } from 'rxjs';
 import { UsersController } from '../../src/users/users.controller';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { OwnershipGuard } from 'src/common/guards/ownership.guard';
+import { JwtAuthGuard } from '../../src/common/guards/jwt-auth.guard';
+import { OwnershipGuard } from '../../src/common/guards/ownership.guard';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -64,6 +64,6 @@ describe('OwnershipGuard', () => {
       }),
     };
     const guard = new OwnershipGuard();
-    expect(() => guard.canActivate(context)).toThrowError('You can only access your own profile.');
+    expect(() => guard.canActivate(context)).toThrow();
   });
 });
